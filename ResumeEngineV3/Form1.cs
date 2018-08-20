@@ -607,27 +607,13 @@ namespace ResumeEngineV3
             Web web = (Web)arguments[1];
             string weight = (string)arguments[7];
 
-            //Arrays holding data to be sent to cortical.io api
-            string[] postData = new string[10];
-            for (int i = 0; i < postData.Length; i++)
-            {
-                postData[i] = "[";
-            }
-            string[] postData2 = new string[10];
-            for (int i = 0; i < postData2.Length; i++)
-            {
-                postData2[i] = "";
-            }
+            //Check if multiple keywords
+            Boolean isSecondKeyword = false;
             if (!String.IsNullOrEmpty((string)arguments[6]))
             {
-                for (int i = 0; i < postData2.Length; i++)
-                {
-                    postData2[i] = "[";
-                }
+                isSecondKeyword = true;
             }
-            int postDataCount = 0;
 
-            bool isUsingCortical = true;
             List<KeyValuePair<double, int>> matchScoreName = new List<KeyValuePair<double, int>>();
             List<KeyValuePair<double, string>> matchScoreLink = new List<KeyValuePair<double, string>>();
             List<KeyValuePair<double, int>> matchScoreExperience = new List<KeyValuePair<double, int>>();
@@ -652,30 +638,25 @@ namespace ResumeEngineV3
             if (energyLib.Contains((string)arguments[3], StringComparer.OrdinalIgnoreCase))
             {
                 whichLib = 0;
-                isUsingCortical = false;
             }
             else if (infrastructureLib.Contains((string)arguments[3], StringComparer.OrdinalIgnoreCase))
             {
                 whichLib = 1;
-                isUsingCortical = false;
             }
             else if (miningLib.Contains((string)arguments[3], StringComparer.OrdinalIgnoreCase))
             {
                 whichLib = 2;
-                isUsingCortical = false;
             }
             else if (concessionsLib.Contains((string)arguments[3], StringComparer.OrdinalIgnoreCase))
             {
                 whichLib = 3;
-                isUsingCortical = false;
             }
             else if (otherLib.Contains((string)arguments[3], StringComparer.OrdinalIgnoreCase))
             {
                 whichLib = 4;
-                isUsingCortical = false;
             }
 
-            if (!String.IsNullOrEmpty(postData2[0]))
+            if (isSecondKeyword == true)
             {
                 if (energyLib.Contains((string)arguments[6], StringComparer.OrdinalIgnoreCase))
                 {
@@ -883,16 +864,127 @@ namespace ResumeEngineV3
                     names.Add(fileName.Replace(".txt", ""));
                     experience.Add(experienceYears);
 
-                    //Use own library or cortical.io
-                    if (isUsingCortical == false)
-                    {
-                        int numExactMatches = 0;
-                        int numCategoryMatches = 0;
+                    int numExactMatches = 0;
+                    int numCategoryMatches = 0;
 
-                        int numExactMatchesSecond = 0;
-                        int numCategoryMatchesSecond = 0;
-                        //Check occurances of keywords in resume
-                        if (whichLib == 0)
+                    int numExactMatchesSecond = 0;
+                    int numCategoryMatchesSecond = 0;
+                    //Check occurances of keywords in resume
+                    if (whichLib == 0)
+                    {
+                        for (int i = 0; i < energyLib.Count; i++)
+                        {
+                            //Resume contains the keyword
+                            if (newConvText.IndexOf(energyLib[i], StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                //Count occurences
+                                int occurences = Regex.Matches(newConvText, @"\b" + energyLib[i], RegexOptions.IgnoreCase).Count;
+
+                                //Exact match
+                                if (String.Equals((string)arguments[3], energyLib[i], StringComparison.OrdinalIgnoreCase))
+                                {
+                                    numExactMatches = numExactMatches + occurences;
+                                }
+                                //Categorical match
+                                else
+                                {
+                                    numCategoryMatches = numCategoryMatches + occurences;
+                                }
+                            }
+                        }
+                    }
+                    else if (whichLib == 1)
+                    {
+                        for (int i = 0; i < infrastructureLib.Count; i++)
+                        {
+                            //Resume contains the keyword
+                            if (newConvText.IndexOf(infrastructureLib[i], StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                //Count occurences
+                                int occurences = Regex.Matches(newConvText, @"\b" + infrastructureLib[i], RegexOptions.IgnoreCase).Count;
+
+                                //Exact match
+                                if (String.Equals((string)arguments[3], infrastructureLib[i], StringComparison.OrdinalIgnoreCase))
+                                {
+                                    numExactMatches = numExactMatches + occurences;
+                                }
+                                //Categorical match
+                                else
+                                {
+                                    numCategoryMatches = numCategoryMatches + occurences;
+                                }
+                            }
+                        }
+                    }
+                    else if (whichLib == 2)
+                    {
+                        for (int i = 0; i < miningLib.Count; i++)
+                        {
+                            //Resume contains the keyword
+                            if (newConvText.IndexOf(miningLib[i], StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                //Count occurences
+                                int occurences = Regex.Matches(newConvText, @"\b" + miningLib[i], RegexOptions.IgnoreCase).Count;
+
+                                //Exact match
+                                if (String.Equals((string)arguments[3], miningLib[i], StringComparison.OrdinalIgnoreCase))
+                                {
+                                    numExactMatches = numExactMatches + occurences;
+                                }
+                                //Categorical match
+                                else
+                                {
+                                    numCategoryMatches = numCategoryMatches + occurences;
+                                }
+                            }
+                        }
+                    }
+                    else if (whichLib == 3)
+                    {
+                        for (int i = 0; i < concessionsLib.Count; i++)
+                        {
+                            //Resume contains the keyword
+                            if (newConvText.IndexOf(concessionsLib[i], StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                //Count occurences
+                                int occurences = Regex.Matches(newConvText, @"\b" + concessionsLib[i], RegexOptions.IgnoreCase).Count;
+
+                                //Exact match
+                                if (String.Equals((string)arguments[3], concessionsLib[i], StringComparison.OrdinalIgnoreCase))
+                                {
+                                    numExactMatches = numExactMatches + occurences;
+                                }
+                                //Categorical match
+                                else
+                                {
+                                    numCategoryMatches = numCategoryMatches + occurences;
+                                }
+                            }
+                        }
+                    }
+                    else if (whichLib == 4)
+                    {
+                        for (int i = 0; i < otherLib.Count; i++)
+                        {
+                            //Resume contains the keyword
+                            if (newConvText.IndexOf(otherLib[i], StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                //Count occurences
+                                int occurences = Regex.Matches(newConvText, @"\b" + otherLib[i], RegexOptions.IgnoreCase).Count;
+
+                                //Exact match
+                                if (String.Equals((string)arguments[3], otherLib[i], StringComparison.OrdinalIgnoreCase))
+                                {
+                                    numExactMatches = numExactMatches + occurences;
+                                }
+                            }
+                        }
+                    }
+
+                    //Do it again for second keyword if the field exists
+                    if (isSecondKeyword == true)
+                    {
+                        if (whichLib2 == 0)
                         {
                             for (int i = 0; i < energyLib.Count; i++)
                             {
@@ -903,19 +995,19 @@ namespace ResumeEngineV3
                                     int occurences = Regex.Matches(newConvText, @"\b" + energyLib[i], RegexOptions.IgnoreCase).Count;
 
                                     //Exact match
-                                    if (String.Equals((string)arguments[3], energyLib[i], StringComparison.OrdinalIgnoreCase))
+                                    if (String.Equals((string)arguments[6], energyLib[i], StringComparison.OrdinalIgnoreCase))
                                     {
-                                        numExactMatches = numExactMatches + occurences;
+                                        numExactMatchesSecond = numExactMatchesSecond + occurences;
                                     }
                                     //Categorical match
                                     else
                                     {
-                                        numCategoryMatches = numCategoryMatches + occurences;
+                                        numCategoryMatchesSecond = numCategoryMatchesSecond + occurences;
                                     }
                                 }
                             }
                         }
-                        else if (whichLib == 1)
+                        if (whichLib2 == 1)
                         {
                             for (int i = 0; i < infrastructureLib.Count; i++)
                             {
@@ -926,19 +1018,19 @@ namespace ResumeEngineV3
                                     int occurences = Regex.Matches(newConvText, @"\b" + infrastructureLib[i], RegexOptions.IgnoreCase).Count;
 
                                     //Exact match
-                                    if (String.Equals((string)arguments[3], infrastructureLib[i], StringComparison.OrdinalIgnoreCase))
+                                    if (String.Equals((string)arguments[6], infrastructureLib[i], StringComparison.OrdinalIgnoreCase))
                                     {
-                                        numExactMatches = numExactMatches + occurences;
+                                        numExactMatchesSecond = numExactMatchesSecond + occurences;
                                     }
                                     //Categorical match
                                     else
                                     {
-                                        numCategoryMatches = numCategoryMatches + occurences;
+                                        numCategoryMatchesSecond = numCategoryMatchesSecond + occurences;
                                     }
                                 }
                             }
                         }
-                        else if (whichLib == 2)
+                        if (whichLib2 == 2)
                         {
                             for (int i = 0; i < miningLib.Count; i++)
                             {
@@ -949,19 +1041,19 @@ namespace ResumeEngineV3
                                     int occurences = Regex.Matches(newConvText, @"\b" + miningLib[i], RegexOptions.IgnoreCase).Count;
 
                                     //Exact match
-                                    if (String.Equals((string)arguments[3], miningLib[i], StringComparison.OrdinalIgnoreCase))
+                                    if (String.Equals((string)arguments[6], miningLib[i], StringComparison.OrdinalIgnoreCase))
                                     {
-                                        numExactMatches = numExactMatches + occurences;
+                                        numExactMatchesSecond = numExactMatchesSecond + occurences;
                                     }
                                     //Categorical match
                                     else
                                     {
-                                        numCategoryMatches = numCategoryMatches + occurences;
+                                        numCategoryMatchesSecond = numCategoryMatchesSecond + occurences;
                                     }
                                 }
                             }
                         }
-                        else if (whichLib == 3)
+                        if (whichLib2 == 3)
                         {
                             for (int i = 0; i < concessionsLib.Count; i++)
                             {
@@ -972,19 +1064,19 @@ namespace ResumeEngineV3
                                     int occurences = Regex.Matches(newConvText, @"\b" + concessionsLib[i], RegexOptions.IgnoreCase).Count;
 
                                     //Exact match
-                                    if (String.Equals((string)arguments[3], concessionsLib[i], StringComparison.OrdinalIgnoreCase))
+                                    if (String.Equals((string)arguments[6], concessionsLib[i], StringComparison.OrdinalIgnoreCase))
                                     {
-                                        numExactMatches = numExactMatches + occurences;
+                                        numExactMatchesSecond = numExactMatchesSecond + occurences;
                                     }
                                     //Categorical match
                                     else
                                     {
-                                        numCategoryMatches = numCategoryMatches + occurences;
+                                        numCategoryMatchesSecond = numCategoryMatchesSecond + occurences;
                                     }
                                 }
                             }
                         }
-                        else if (whichLib == 4)
+                        if (whichLib2 == 4)
                         {
                             for (int i = 0; i < otherLib.Count; i++)
                             {
@@ -995,162 +1087,32 @@ namespace ResumeEngineV3
                                     int occurences = Regex.Matches(newConvText, @"\b" + otherLib[i], RegexOptions.IgnoreCase).Count;
 
                                     //Exact match
-                                    if (String.Equals((string)arguments[3], otherLib[i], StringComparison.OrdinalIgnoreCase))
+                                    if (String.Equals((string)arguments[6], otherLib[i], StringComparison.OrdinalIgnoreCase))
                                     {
-                                        numExactMatches = numExactMatches + occurences;
+                                        numExactMatchesSecond = numExactMatchesSecond + occurences;
                                     }
                                 }
                             }
                         }
+                    }
+                    //Calculate match score by weighting exact matches as 1 point, category matches as 0.1 point
+                    double totalMatchScore = 0;
+                    if (isSecondKeyword == true)
+                    {
+                        double firstWeight = (double)(Int32.Parse(weight.Replace("%", ""))) / 100;
+                        double secondWeight = 1 - firstWeight;
 
-                        //Do it again for second keyword if the field exists
-                        if (!String.IsNullOrEmpty(postData2[0]))
-                        {
-                            if (whichLib2 == 0)
-                            {
-                                for (int i = 0; i < energyLib.Count; i++)
-                                {
-                                    //Resume contains the keyword
-                                    if (newConvText.IndexOf(energyLib[i], StringComparison.OrdinalIgnoreCase) >= 0)
-                                    {
-                                        //Count occurences
-                                        int occurences = Regex.Matches(newConvText, @"\b" + energyLib[i], RegexOptions.IgnoreCase).Count;
-
-                                        //Exact match
-                                        if (String.Equals((string)arguments[6], energyLib[i], StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            numExactMatchesSecond = numExactMatchesSecond + occurences;
-                                        }
-                                        //Categorical match
-                                        else
-                                        {
-                                            numCategoryMatchesSecond = numCategoryMatchesSecond + occurences;
-                                        }
-                                    }
-                                }
-                            }
-                            if (whichLib2 == 1)
-                            {
-                                for (int i = 0; i < infrastructureLib.Count; i++)
-                                {
-                                    //Resume contains the keyword
-                                    if (newConvText.IndexOf(infrastructureLib[i], StringComparison.OrdinalIgnoreCase) >= 0)
-                                    {
-                                        //Count occurences
-                                        int occurences = Regex.Matches(newConvText, @"\b" + infrastructureLib[i], RegexOptions.IgnoreCase).Count;
-
-                                        //Exact match
-                                        if (String.Equals((string)arguments[6], infrastructureLib[i], StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            numExactMatchesSecond = numExactMatchesSecond + occurences;
-                                        }
-                                        //Categorical match
-                                        else
-                                        {
-                                            numCategoryMatchesSecond = numCategoryMatchesSecond + occurences;
-                                        }
-                                    }
-                                }
-                            }
-                            if (whichLib2 == 2)
-                            {
-                                for (int i = 0; i < miningLib.Count; i++)
-                                {
-                                    //Resume contains the keyword
-                                    if (newConvText.IndexOf(miningLib[i], StringComparison.OrdinalIgnoreCase) >= 0)
-                                    {
-                                        //Count occurences
-                                        int occurences = Regex.Matches(newConvText, @"\b" + miningLib[i], RegexOptions.IgnoreCase).Count;
-
-                                        //Exact match
-                                        if (String.Equals((string)arguments[6], miningLib[i], StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            numExactMatchesSecond = numExactMatchesSecond + occurences;
-                                        }
-                                        //Categorical match
-                                        else
-                                        {
-                                            numCategoryMatchesSecond = numCategoryMatchesSecond + occurences;
-                                        }
-                                    }
-                                }
-                            }
-                            if (whichLib2 == 3)
-                            {
-                                for (int i = 0; i < concessionsLib.Count; i++)
-                                {
-                                    //Resume contains the keyword
-                                    if (newConvText.IndexOf(concessionsLib[i], StringComparison.OrdinalIgnoreCase) >= 0)
-                                    {
-                                        //Count occurences
-                                        int occurences = Regex.Matches(newConvText, @"\b" + concessionsLib[i], RegexOptions.IgnoreCase).Count;
-
-                                        //Exact match
-                                        if (String.Equals((string)arguments[6], concessionsLib[i], StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            numExactMatchesSecond = numExactMatchesSecond + occurences;
-                                        }
-                                        //Categorical match
-                                        else
-                                        {
-                                            numCategoryMatchesSecond = numCategoryMatchesSecond + occurences;
-                                        }
-                                    }
-                                }
-                            }
-                            if (whichLib2 == 4)
-                            {
-                                for (int i = 0; i < otherLib.Count; i++)
-                                {
-                                    //Resume contains the keyword
-                                    if (newConvText.IndexOf(otherLib[i], StringComparison.OrdinalIgnoreCase) >= 0)
-                                    {
-                                        //Count occurences
-                                        int occurences = Regex.Matches(newConvText, @"\b" + otherLib[i], RegexOptions.IgnoreCase).Count;
-
-                                        //Exact match
-                                        if (String.Equals((string)arguments[6], otherLib[i], StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            numExactMatchesSecond = numExactMatchesSecond + occurences;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        //Calculate match score by weighting exact matches as 1 point, category matches as 0.1 point
-                        double totalMatchScore = 0;
-                        if (!String.IsNullOrEmpty(postData2[0]))
-                        {
-                            double firstWeight = (double)(Int32.Parse(weight.Replace("%", ""))) / 100;
-                            double secondWeight = 1 - firstWeight;
-
-                            double matchPercent = (numExactMatches + ((double)numCategoryMatches / 10)) * 10;
-                            double matchPercent2 = (numExactMatchesSecond + ((double)numCategoryMatchesSecond / 10)) * 10;
-                            totalMatchScore = (((matchPercent / 100) * firstWeight) + ((matchPercent2 / 100) * secondWeight)) * 100;
-                        }
-                        else
-                        {
-                            totalMatchScore = (numExactMatches + ((double)numCategoryMatches / 10)) * 10;
-                        }
-                        matchScoreExperience.Add(new KeyValuePair<double, int>(totalMatchScore, experience[matchScoreCounter]));
-                        matchScoreLink.Add(new KeyValuePair<double, string>(totalMatchScore, links[matchScoreCounter]));
-                        matchScoreName.Add(new KeyValuePair<double, int>(totalMatchScore, matchScoreCounter++));
+                        double matchPercent = (numExactMatches + ((double)numCategoryMatches / 10)) * 10;
+                        double matchPercent2 = (numExactMatchesSecond + ((double)numCategoryMatchesSecond / 10)) * 10;
+                        totalMatchScore = (((matchPercent / 100) * firstWeight) + ((matchPercent2 / 100) * secondWeight)) * 100;
                     }
                     else
                     {
-                        //Build JSON request string each loop
-                        postData[postDataCount] += "[{\"term\": \"" + (string)arguments[3] + "\"},{\"text\": \"" + newConvText + "\"}],";
-                        if (!String.IsNullOrEmpty(postData2[0]))
-                        {
-                            postData2[postDataCount] += "[{\"term\": \"" + (string)arguments[6] + "\"},{\"text\": \"" + newConvText + "\"}],";
-                        }
+                        totalMatchScore = (numExactMatches + ((double)numCategoryMatches / 10)) * 10;
                     }
-                }
-
-                //Incriment postDataCount if number of files is past limits
-                if (resumeUseCount > (199 + (200 * postDataCount)))
-                {
-                    postDataCount++;
+                    matchScoreExperience.Add(new KeyValuePair<double, int>(totalMatchScore, experience[matchScoreCounter]));
+                    matchScoreLink.Add(new KeyValuePair<double, string>(totalMatchScore, links[matchScoreCounter]));
+                    matchScoreName.Add(new KeyValuePair<double, int>(totalMatchScore, matchScoreCounter++));
                 }
 
                 //Send new progress bar value to backgroundWorker1_ProgressChanged as fields cannot be updated in backgroundWorker thread
@@ -1163,224 +1125,39 @@ namespace ResumeEngineV3
                 }
             }
 
-            if (isUsingCortical == true)
+            backgroundWorker1.ReportProgress(99);
+
+            //Order from greatest to least match percent
+            matchScoreName = matchScoreName.OrderByDescending(x => x.Key).ToList();
+            matchScoreLink = matchScoreLink.OrderByDescending(x => x.Key).ToList();
+            matchScoreExperience = matchScoreExperience.OrderByDescending(x => x.Key).ToList();
+
+            List<string> keyList = new List<string>();
+            //Generates response to populate gridView
+            for (int i = 0; i < matchScoreName.Count(); i++)
             {
-                //Removes trailing ',' and replaces with ']' to close JSON object
-                for (int i = 0; i <= postDataCount; i++)
-                {
-                    postData[i] = postData[i].Remove(postData[i].Length - 1, 1) + "]";
-                    if (!String.IsNullOrEmpty(postData2[0]))
-                    {
-                        postData2[i] = postData2[i].Remove(postData2[i].Length - 1, 1) + "]";
-                    }
+                namesOrdered.Add(names[matchScoreName[i].Value]);
+                linksOrdered.Add(matchScoreLink[i].Value);
+                experienceOrdered.Add(matchScoreExperience[i].Value);
+                keyList.Add(matchScoreName[i].Key + "%");
+            }
 
-                    //No Data found
-                    if (postData[i] == "]")
-                    {
-                        MessageBox.Show("No data could be obtained using the search parameters!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                        List<object> newArgs = new List<object>();
-                        newArgs.Add("Results:");
-                        newArgs.Add(true);
-                        e.Result = newArgs;
-                        return;
-                    }
-                }
+            backgroundWorker1.ReportProgress(100);
 
-                //System.IO.File.WriteAllText(@"C:\\Users\\brahamj\\Downloads\\jsonPost.txt", postData);
-                //postData = System.IO.File.ReadAllText(@"C:\\Users\\brahamj\\Downloads\\jsonPost.txt");
-
-                //API Request to cortical.io to compare text taken from SharePoint with a keyword the user provided
-                List<KeyValuePair<double, int>> percentName = new List<KeyValuePair<double, int>>();
-                List<KeyValuePair<double, string>> percentLink = new List<KeyValuePair<double, string>>();
-                List<KeyValuePair<double, int>> percentExperience = new List<KeyValuePair<double, int>>();
-                backgroundWorker1.ReportProgress(99);
-                for (int k = 0; k <= postDataCount; k++)
-                {
-                    WebRequest webRequest = WebRequest.Create("http://api.cortical.io:80/rest/compare/bulk?retina_name=en_associative");
-                    webRequest.Method = "POST";
-                    //API key got from cortical.io/resources_apikey.html
-                    webRequest.Headers["api-key"] = "bb355cc0-5873-11e8-9172-3ff24e827f76";
-                    webRequest.ContentType = "application/json";
-                    //Send request with postData string as the body
-                    using (var streamWriter = new StreamWriter(webRequest.GetRequestStream()))
-                    {
-                        streamWriter.Write(postData[k]);
-                        streamWriter.Flush();
-                        streamWriter.Close();
-                    }
-                    string result = "";
-                    string result2 = "";
-                    //Recieve response from cortical.io API
-                    try
-                    {
-                        WebResponse webResp = webRequest.GetResponse();
-                        using (var streamReader = new StreamReader(webResp.GetResponseStream()))
-                        {
-                            result = streamReader.ReadToEnd();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("\nCannot connect to cortical.io API. Aborting!\n\nError: " + ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                        List<object> newArgs = new List<object>();
-                        newArgs.Add("Results:");
-                        newArgs.Add(true);
-                        e.Result = newArgs;
-                        return;
-                    }
-
-                    if (!String.IsNullOrEmpty(postData2[0]))
-                    {
-                        webRequest = WebRequest.Create("http://api.cortical.io:80/rest/compare/bulk?retina_name=en_associative");
-                        webRequest.Method = "POST";
-                        //API key got from cortical.io/resources_apikey.html
-                        webRequest.Headers["api-key"] = "bb355cc0-5873-11e8-9172-3ff24e827f76";
-                        webRequest.ContentType = "application/json";
-                        //Send request with postData string as the body
-                        using (var streamWriter = new StreamWriter(webRequest.GetRequestStream()))
-                        {
-                            streamWriter.Write(postData2[k]);
-                            streamWriter.Flush();
-                            streamWriter.Close();
-                        }
-                        //Recieve response from cortical.io API
-                        try
-                        {
-                            WebResponse webResp = webRequest.GetResponse();
-                            using (var streamReader = new StreamReader(webResp.GetResponseStream()))
-                            {
-                                result2 = streamReader.ReadToEnd();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show("\nCannot connect to cortical.io API. Aborting!\n\nError: " + ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                            List<object> newArgs = new List<object>();
-                            newArgs.Add("Results:");
-                            newArgs.Add(true);
-                            e.Result = newArgs;
-                            return;
-                        }
-                    }
-
-                    //Formats return string as JSON
-                    dynamic jsonObj = JsonConvert.DeserializeObject<dynamic>(result);
-                    dynamic jsonObj2 = null;
-                    if (!String.IsNullOrEmpty(postData2[0]))
-                    {
-                        jsonObj2 = JsonConvert.DeserializeObject<dynamic>(result2);
-                    }
-
-                    //Calculates match percent for each return object which correlates to each resume
-                    for (int i = 0; i < jsonObj.Count; i++)
-                    {
-                        double matchPercent = Math.Round((double)jsonObj[i].cosineSimilarity, 3);
-                        double matchPercent2 = 0;
-                        if (!String.IsNullOrEmpty(postData2[0]))
-                        {
-                            matchPercent2 = Math.Round((double)jsonObj2[i].cosineSimilarity, 3);
-
-                            if (matchPercent2 <= 0.1)
-                            {
-                                matchPercent2 = 0;
-                            }
-                            else
-                            {
-                                matchPercent2 = Math.Round(((Math.Pow(Math.Log10(1 / matchPercent2), 3.55) * -1) + 1) * 100, 2);
-                            }
-                        }
-
-                        if (matchPercent <= 0.1)
-                        {
-                            matchPercent = 0;
-                        }
-                        else
-                        {
-                            matchPercent = Math.Round(((Math.Pow(Math.Log10(1 / matchPercent), 3.55) * -1) + 1) * 100, 2);
-                        }
-
-                        //If multiple keywords, get weighted percent
-                        if (!String.IsNullOrEmpty(postData2[0]))
-                        {
-                            double firstWeight = (double)(Int32.Parse(weight.Replace("%", ""))) / 100;
-                            double secondWeight = 1 - firstWeight;
-
-                            matchPercent = (((matchPercent / 100) * firstWeight) + ((matchPercent2 / 100) * secondWeight)) * 100;
-                        }
-                        percentExperience.Add(new KeyValuePair<double, int>(matchPercent, experience[(k * 200) + i]));
-                        percentLink.Add(new KeyValuePair<double, string>(matchPercent, links[(k * 200) + i]));
-                        percentName.Add(new KeyValuePair<double, int>(matchPercent, (k * 200) + i));
-                    }
-                }
-
-                //Order from greatest to least match percent
-                percentName = percentName.OrderByDescending(x => x.Key).ToList();
-                percentLink = percentLink.OrderByDescending(x => x.Key).ToList();
-                percentExperience = percentExperience.OrderByDescending(x => x.Key).ToList();
-
-                List<string> keyList = new List<string>();
-                //Generates response to populate gridView
-                for (int i = 0; i < percentName.Count(); i++)
-                {
-                    namesOrdered.Add(names[percentName[i].Value]);
-                    linksOrdered.Add(percentLink[i].Value);
-                    experienceOrdered.Add(percentExperience[i].Value);
-                    keyList.Add(percentName[i].Key + "%");
-                }
-
-                backgroundWorker1.ReportProgress(100);
-
-                //Sends finished data to e.Result so when backgroundWorker1 is completed it can access the data and correctly update the fields
-                //This has to be done as you cannot update the fields inside backgroundWorker thread
-                List<object> returnArgs = new List<object>();
-                if (!String.IsNullOrEmpty(postData2[0]))
-                {
-                    returnArgs.Add("Results for \"" + (string)arguments[3] + "\" and \"" + (string)arguments[6] + "\":\n(You can double click any row to view the resume)");
-                }
-                else
-                {
-                    returnArgs.Add("Results for \"" + (string)arguments[3] + "\":\n(You can double click any row to view the resume)");
-                }
-                returnArgs.Add(false);
-                returnArgs.Add(keyList);
-                e.Result = returnArgs;
+            //Sends finished data to e.Result so when backgroundWorker1 is completed it can access the data and correctly update the fields
+            //This has to be done as you cannot update the fields inside backgroundWorker thread
+            List<object> returnArgs = new List<object>();
+            if (isSecondKeyword == true)
+            {
+                returnArgs.Add("Results for \"" + (string)arguments[3] + "\" and \"" + (string)arguments[6] + "\":\n(You can double click any row to view the resume)");
             }
             else
             {
-                backgroundWorker1.ReportProgress(99);
-
-                //Order from greatest to least match percent
-                matchScoreName = matchScoreName.OrderByDescending(x => x.Key).ToList();
-                matchScoreLink = matchScoreLink.OrderByDescending(x => x.Key).ToList();
-                matchScoreExperience = matchScoreExperience.OrderByDescending(x => x.Key).ToList();
-
-                List<string> keyList = new List<string>();
-                //Generates response to populate gridView
-                for (int i = 0; i < matchScoreName.Count(); i++)
-                {
-                    namesOrdered.Add(names[matchScoreName[i].Value]);
-                    linksOrdered.Add(matchScoreLink[i].Value);
-                    experienceOrdered.Add(matchScoreExperience[i].Value);
-                    keyList.Add(matchScoreName[i].Key + "%");
-                }
-
-                backgroundWorker1.ReportProgress(100);
-
-                //Sends finished data to e.Result so when backgroundWorker1 is completed it can access the data and correctly update the fields
-                //This has to be done as you cannot update the fields inside backgroundWorker thread
-                List<object> returnArgs = new List<object>();
-                if (!String.IsNullOrEmpty(postData2[0]))
-                {
-                    returnArgs.Add("Results for \"" + (string)arguments[3] + "\" and \"" + (string)arguments[6] + "\":\n(You can double click any row to view the resume)");
-                }
-                else
-                {
-                    returnArgs.Add("Results for \"" + (string)arguments[3] + "\":\n(You can double click any row to view the resume)");
-                }
-                returnArgs.Add(false);
-                returnArgs.Add(keyList);
-                e.Result = returnArgs;
+                returnArgs.Add("Results for \"" + (string)arguments[3] + "\":\n(You can double click any row to view the resume)");
             }
+            returnArgs.Add(false);
+            returnArgs.Add(keyList);
+            e.Result = returnArgs;
         }
 
         void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
