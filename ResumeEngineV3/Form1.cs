@@ -380,10 +380,41 @@ namespace ResumeEngineV3
             {
                 MessageBox.Show("Please enter a valid number for years of experience greater then or equal to zero!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
-            //If user enters first keyword in our lib, second keyword must also be in the lib
-            else if (lblAddTextBox.Visible == false && (energyLib.Contains(txtBoxKeyword.Text, StringComparer.OrdinalIgnoreCase) || infrastructureLib.Contains(txtBoxKeyword.Text, StringComparer.OrdinalIgnoreCase) || miningLib.Contains(txtBoxKeyword.Text, StringComparer.OrdinalIgnoreCase) || concessionsLib.Contains(txtBoxKeyword.Text, StringComparer.OrdinalIgnoreCase) || otherLib.Contains(txtBoxKeyword.Text, StringComparer.OrdinalIgnoreCase)) && (!energyLib.Contains(txtBoxSecondKeyword.Text, StringComparer.OrdinalIgnoreCase) && !infrastructureLib.Contains(txtBoxSecondKeyword.Text, StringComparer.OrdinalIgnoreCase) && !miningLib.Contains(txtBoxSecondKeyword.Text, StringComparer.OrdinalIgnoreCase) && !concessionsLib.Contains(txtBoxSecondKeyword.Text, StringComparer.OrdinalIgnoreCase) && !otherLib.Contains(txtBoxSecondKeyword.Text, StringComparer.OrdinalIgnoreCase)))
+            //First keyword must be in lib
+            else if (!energyLib.Contains(txtBoxKeyword.Text, StringComparer.OrdinalIgnoreCase) && !infrastructureLib.Contains(txtBoxKeyword.Text, StringComparer.OrdinalIgnoreCase) && !miningLib.Contains(txtBoxKeyword.Text, StringComparer.OrdinalIgnoreCase) && !concessionsLib.Contains(txtBoxKeyword.Text, StringComparer.OrdinalIgnoreCase) && !otherLib.Contains(txtBoxKeyword.Text, StringComparer.OrdinalIgnoreCase))
             {
-                string message = "Your first keyword is in our library and so the second keyword must also be in the library!\n\nList of Keywords:\n\n";
+                string message = "Your first keyword must be in the library!\n\nList of Keywords:\n\n";
+                for (int i = 0; i < energyLib.Count; i++)
+                {
+                    message += energyLib[i] + ", ";
+                }
+                message = message.Remove(message.Length - 2, 2) + "\n\n";
+                for (int i = 0; i < infrastructureLib.Count; i++)
+                {
+                    message += infrastructureLib[i] + ", ";
+                }
+                message = message.Remove(message.Length - 2, 2) + "\n\n";
+                for (int i = 0; i < miningLib.Count; i++)
+                {
+                    message += miningLib[i] + ", ";
+                }
+                message = message.Remove(message.Length - 2, 2) + "\n\n";
+                for (int i = 0; i < concessionsLib.Count; i++)
+                {
+                    message += concessionsLib[i] + ", ";
+                }
+                message = message.Remove(message.Length - 2, 2) + "\n\n";
+                for (int i = 0; i < otherLib.Count; i++)
+                {
+                    message += otherLib[i] + ", ";
+                }
+                message = message.Remove(message.Length - 2, 2);
+                MessageBox.Show(message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            //Second keyword must also be in the lib
+            else if (lblAddTextBox.Visible == false && (!energyLib.Contains(txtBoxSecondKeyword.Text, StringComparer.OrdinalIgnoreCase) && !infrastructureLib.Contains(txtBoxSecondKeyword.Text, StringComparer.OrdinalIgnoreCase) && !miningLib.Contains(txtBoxSecondKeyword.Text, StringComparer.OrdinalIgnoreCase) && !concessionsLib.Contains(txtBoxSecondKeyword.Text, StringComparer.OrdinalIgnoreCase) && !otherLib.Contains(txtBoxSecondKeyword.Text, StringComparer.OrdinalIgnoreCase)))
+            {
+                string message = "Your second keyword must also be in the library!\n\nList of Keywords:\n\n";
                 for (int i = 0; i < energyLib.Count; i++)
                 {
                     message += energyLib[i] + ", ";
@@ -634,7 +665,7 @@ namespace ResumeEngineV3
             int whichLib = -1;
             int whichLib2 = -1;
 
-            //Check if keyword matches any keywords in library and thus we are not using cortical.io
+            //Find which category the keyword is in
             if (energyLib.Contains((string)arguments[3], StringComparer.OrdinalIgnoreCase))
             {
                 whichLib = 0;
@@ -1118,7 +1149,7 @@ namespace ResumeEngineV3
                 //Send new progress bar value to backgroundWorker1_ProgressChanged as fields cannot be updated in backgroundWorker thread
                 double progressPercent = ((double)count / totalCount) * 100;
                 progressPercent = Math.Round(progressPercent, 0);
-                //Leave 2 percent of progress for time it takes to make api call
+                //Leave 2 percent of progress for time it takes to display and organize results 
                 if (progressPercent <= 98)
                 {
                     backgroundWorker1.ReportProgress((int)progressPercent);
@@ -1170,7 +1201,7 @@ namespace ResumeEngineV3
         {
             //Update fields
             List<object> arguments = e.Result as List<object>;
-            //Argument[2] will only be true if system could not connect to cortical.io service which in that case no results are available
+            //Argument[1] will only be true if system could not get results 
             if ((Boolean)arguments[1] == false)
             {
                 List<string> keyList = (List<string>)arguments[2];
