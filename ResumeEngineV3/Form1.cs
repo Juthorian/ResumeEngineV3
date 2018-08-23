@@ -1,7 +1,6 @@
 ﻿using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using Microsoft.SharePoint.Client;
-using Newtonsoft.Json;
 using Spire.Doc;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,6 @@ using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
